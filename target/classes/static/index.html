@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dev Journal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Literata:opsz,wght@7..72,400;7..72,600;7..72,700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #eef2f6;
+            --surface: #ffffff;
+            --ink: #14213d;
+            --muted: #5b6b82;
+            --line: #d5dde8;
+            --accent: #2f5bea;
+            --accent-ink: #ffffff;
+            --warn-bg: #fdf0cf;
+            --warn-ink: #6b4a00;
+            --danger: #b3261e;
+            --serif: 'Literata', Georgia, 'Times New Roman', serif;
+            --sans: 'DM Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+        }
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #0f1624;
+                --surface: #172033;
+                --ink: #e8edf6;
+                --muted: #9aa8bf;
+                --line: #2a3650;
+                --accent: #7ea2ff;
+                --accent-ink: #0f1624;
+                --warn-bg: #3a2e0f;
+                --warn-ink: #f2d58a;
+                --danger: #ff8a80;
+            }
+        }
+        * { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--ink);
+            font-family: var(--sans);
+            font-size: 16px;
+            line-height: 1.55;
+        }
+        a { color: var(--accent); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        :focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+        h1, h2 { font-family: var(--serif); line-height: 1.2; margin: 0; }
+        .wrap { max-width: 760px; margin: 0 auto; padding: 0 20px; }
+        .muted { color: var(--muted); }
+
+        /* header */
+        .topbar { border-bottom: 1px solid var(--line); background: var(--surface); }
+        .bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 64px; flex-wrap: wrap; }
+        .brand { font-family: var(--serif); font-weight: 700; font-size: 1.35rem; color: var(--ink); }
+        .brand:hover { text-decoration: none; }
+        nav { display: flex; align-items: center; gap: 16px; }
+        nav .who { font-weight: 500; }
+
+        main { padding-top: 36px; padding-bottom: 80px; }
+
+        /* buttons */
+        .btn {
+            display: inline-block; font: inherit; font-weight: 500; cursor: pointer;
+            background: var(--accent); color: var(--accent-ink);
+            border: 1px solid var(--accent); border-radius: 8px; padding: 9px 18px;
+        }
+        .btn:hover { text-decoration: none; filter: brightness(1.08); }
+        .btn:disabled { opacity: .6; cursor: not-allowed; }
+        .btn.small { padding: 6px 12px; }
+        .btn.ghost { background: transparent; color: var(--ink); border-color: var(--line); }
+        .btn.danger { background: transparent; color: var(--danger); border-color: var(--danger); }
+        .linklike { background: none; border: 0; padding: 0; font: inherit; color: var(--accent); cursor: pointer; }
+        .linklike:hover { text-decoration: underline; }
+        .linklike.danger { color: var(--danger); }
+
+        /* post list */
+        .page-head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 28px; }
+        .page-head h1 { font-size: 2rem; }
+        .post-row {
+            display: grid; grid-template-columns: 84px 1fr; gap: 20px;
+            padding: 22px 0; border-top: 1px solid var(--line); color: inherit;
+        }
+        .post-row:last-child { border-bottom: 1px solid var(--line); }
+        .post-row:hover { text-decoration: none; }
+        .post-row:hover h2 { color: var(--accent); }
+        .date { display: flex; flex-direction: column; line-height: 1.1; }
+        .date .day { font-family: var(--serif); font-size: 2.2rem; font-weight: 700; }
+        .date .monyr { color: var(--muted); font-size: .85rem; margin-top: 4px; }
+        .post-row h2 { font-size: 1.4rem; margin-bottom: 6px; }
+        .post-row p { margin: 0 0 8px; color: var(--muted); }
+        .by { font-size: .9rem; color: var(--muted); }
+        .badge {
+            display: inline-block; vertical-align: middle; font-family: var(--sans); font-size: .75rem; font-weight: 500;
+            background: var(--warn-bg); color: var(--warn-ink); padding: 2px 8px; border-radius: 99px; margin-left: 6px;
+        }
+
+        /* article */
+        .back { display: inline-block; margin-bottom: 20px; font-size: .95rem; }
+        article h1 { font-size: clamp(1.9rem, 4.5vw, 2.7rem); margin-bottom: 16px; }
+        .byline { display: flex; align-items: center; gap: 10px; margin-bottom: 28px; }
+        .avatar {
+            width: 32px; height: 32px; border-radius: 50%; background: var(--accent); color: var(--accent-ink);
+            display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: .9rem;
+        }
+        .content {
+            font-family: var(--serif); font-size: 1.12rem; line-height: 1.8; max-width: 65ch;
+            white-space: pre-wrap; overflow-wrap: anywhere;
+        }
+        .actions { display: flex; gap: 12px; margin-top: 28px; flex-wrap: wrap; }
+
+        /* comments */
+        .comments { margin-top: 56px; padding-top: 28px; border-top: 1px solid var(--line); }
+        .comments h2 { font-size: 1.4rem; margin-bottom: 20px; }
+        .comment { padding: 14px 0 14px 16px; border-left: 3px solid var(--line); margin-bottom: 14px; }
+        .comment .chead { display: flex; gap: 12px; align-items: baseline; }
+        .comment p { margin: 4px 0 6px; white-space: pre-wrap; overflow-wrap: anywhere; }
+
+        /* forms */
+        .form { display: grid; gap: 18px; max-width: 560px; }
+        .form label { display: grid; gap: 6px; font-weight: 500; }
+        input, textarea, select {
+            font: inherit; color: var(--ink); background: var(--surface);
+            border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; width: 100%;
+        }
+        textarea { resize: vertical; line-height: 1.6; }
+        .form.wide { max-width: none; }
+        main h1 { margin-bottom: 20px; }
+        .auth { max-width: 420px; }
+
+        /* misc */
+        .empty { padding: 48px 0; text-align: center; color: var(--muted); }
+        .empty a { font-weight: 500; }
+        .notice.error { background: var(--warn-bg); color: var(--warn-ink); padding: 14px 16px; border-radius: 8px; }
+        .toast {
+            position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 20px);
+            background: var(--ink); color: var(--bg); padding: 10px 18px; border-radius: 8px;
+            opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; max-width: 90vw; z-index: 10;
+        }
+        .toast.show { opacity: 1; transform: translate(-50%, 0); }
+        .toast.err { background: var(--danger); color: #fff; }
+        @media (prefers-reduced-motion: reduce) { .toast { transition: none; } html { scroll-behavior: auto; } }
+        @media (max-width: 520px) {
+            .post-row { grid-template-columns: 1fr; gap: 6px; }
+            .date { flex-direction: row; align-items: baseline; gap: 8px; }
+            .date .day { font-size: 1.4rem; }
+        }
+    </style>
+</head>
+<body>
+<header class="topbar">
+    <div class="wrap bar">
+        <a href="#/" class="brand">Dev Journal</a>
+        <nav id="nav" aria-label="Main"></nav>
+    </div>
+</header>
+<main class="wrap" id="app"></main>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<script>
+    /* ---------- helpers ---------- */
+    const app = document.getElementById('app');
+    const nav = document.getElementById('nav');
+
+    const store = {
+        get user() {
+            try { return JSON.parse(localStorage.getItem('blog_user')); } catch (e) { return null; }
+        },
+        set user(v) {
+            if (v) localStorage.setItem('blog_user', JSON.stringify(v));
+            else localStorage.removeItem('blog_user');
+        }
+    };
+
+    // Escape every piece of user text before putting it into HTML (prevents XSS).
+    const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c =>
+        ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+    const fmt = iso => new Date(iso).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' });
+    const day = iso => String(new Date(iso).getDate()).padStart(2, '0');
+    const monYear = iso => new Date(iso).toLocaleDateString(undefined, { month: 'short', year: 'numeric' });
+    const excerpt = t => { const s = String(t || '').replace(/\s+/g, ' ').trim(); return s.length > 180 ? s.slice(0, 180).trimEnd() + '…' : s; };
+    const loading = () => '<p class="muted">Loading…</p>';
+    const empty = html => `<div class="empty">${html}</div>`;
+
+    let toastTimer;
+    function toast(msg, isError) {
+        const t = document.getElementById('toast');
+        t.textContent = msg;
+        t.className = 'toast show' + (isError ? ' err' : '');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => { t.className = 'toast'; }, 3200);
+    }
+
+    // Navigate, and re-render even when the hash is already the same.
+    function go(hash) {
+        if (location.hash === hash) render(); else location.hash = hash;
+    }
+
+    function errorText(d) {
+        if (!d) return '';
+        if (d.errors) return Object.values(d.errors).join('. ');
+        return d.message || '';
+    }
+
+    /* ---------- API ---------- */
+    async function api(path, { method = 'GET', body, auth = false } = {}) {
+        const headers = {};
+        if (body !== undefined) headers['Content-Type'] = 'application/json';
+        if (auth && store.user) headers['Authorization'] = 'Bearer ' + store.user.token;
+        let res;
+        try {
+            res = await fetch(path, { method, headers, body: body !== undefined ? JSON.stringify(body) : undefined });
+        } catch (e) {
+            throw new Error('Cannot reach the server. Check that the app is running.');
+        }
+        if (res.status === 204) return null;
+        let data = null;
+        try { data = await res.json(); } catch (e) { /* empty body */ }
+        if (!res.ok) {
+            if (res.status === 401 && auth) {
+                store.user = null;
+                location.hash = '#/login';
+                throw new Error('Your session ended. Log in again.');
+            }
+            throw new Error(errorText(data) || 'Request failed (' + res.status + ')');
+        }
+        return data;
+    }
+
+    /* ---------- navigation bar ---------- */
+    function renderNav() {
+        const u = store.user;
+        nav.innerHTML = u
+            ? `<a href="#/new">Write</a><span class="who">${esc(u.username)}</span><button class="linklike" id="logout">Log out</button>`
+            : `<a href="#/login">Log in</a><a class="btn small" href="#/register">Create account</a>`;
+        const lo = document.getElementById('logout');
+        if (lo) lo.onclick = () => { store.user = null; toast('Logged out'); go('#/'); };
+    }
+
+    /* ---------- views ---------- */
+    function postRow(p) {
+        return `<a class="post-row" href="#/post/${p.id}">
+    <div class="date"><span class="day">${day(p.createdAt)}</span><span class="monyr">${monYear(p.createdAt)}</span></div>
+    <div>
+      <h2>${esc(p.title)}${p.status === 'DRAFT' ? '<span class="badge">Draft</span>' : ''}</h2>
+      <p>${esc(excerpt(p.content))}</p>
+      <span class="by">by ${esc(p.author || 'unknown')}</span>
+    </div>
+  </a>`;
+    }
+
+    async function viewHome() {
+        app.innerHTML = loading();
+        const posts = await api('/api/posts');
+        const u = store.user;
+        app.innerHTML =
+            `<div class="page-head"><h1>Latest posts</h1>${u ? '<a class="btn" href="#/new">Write a post</a>' : ''}</div>` +
+            (posts.length
+                ? posts.map(postRow).join('')
+                : empty(u ? 'No posts yet. <a href="#/new">Write the first one.</a>'
+                    : 'No posts yet. <a href="#/register">Create an account</a> to write the first one.'));
+    }
+
+    async function viewPost(id) {
+        app.innerHTML = loading();
+        const [post, comments] = await Promise.all([
+            api('/api/posts/' + id),
+            api('/api/posts/' + id + '/comments')
+        ]);
+        const u = store.user;
+        const isAdmin = !!u && u.role === 'ADMIN';
+        const canEdit = !!u && (u.username === post.author || isAdmin);
+        const canDelete = c => !!u && (u.username === c.author || u.username === post.author || isAdmin);
+
+        app.innerHTML = `
+    <article>
+      <a class="back" href="#/">Back to all posts</a>
+      <h1>${esc(post.title)}${post.status === 'DRAFT' ? '<span class="badge">Draft</span>' : ''}</h1>
+      <div class="byline">
+        <span class="avatar">${esc((post.author || '?').charAt(0).toUpperCase())}</span>
+        <span>${esc(post.author || 'unknown')}</span>
+        <span class="muted">${fmt(post.createdAt)}</span>
+      </div>
+      <div class="content">${esc(post.content)}</div>
+      ${canEdit ? `<div class="actions">
+        <a class="btn ghost" href="#/edit/${post.id}">Edit post</a>
+        <button class="btn danger" id="del-post">Delete post</button></div>` : ''}
+    </article>
+
+    <section class="comments" aria-labelledby="comments-h">
+      <h2 id="comments-h">Comments (${comments.length})</h2>
+      ${comments.length ? comments.map(c => `
+        <div class="comment">
+          <div class="chead"><strong>${esc(c.author)}</strong><span class="muted">${fmt(c.createdAt)}</span></div>
+          <p>${esc(c.content)}</p>
+          ${canDelete(c) ? `<button class="linklike danger" data-del="${c.id}">Delete</button>` : ''}
+        </div>`).join('') : '<p class="muted">No comments yet. Start the conversation.</p>'}
+      ${u ? `<form id="comment-form" class="form wide" style="margin-top:20px">
+          <label>Add a comment<textarea name="content" rows="3" maxlength="2000" required></textarea></label>
+          <div><button class="btn">Post comment</button></div>
+        </form>`
+            : '<p class="muted" style="margin-top:20px"><a href="#/login">Log in</a> to leave a comment.</p>'}
+    </section>`;
+
+        const delPost = document.getElementById('del-post');
+        if (delPost) delPost.onclick = async () => {
+            if (!confirm('Delete this post and all its comments?')) return;
+            try {
+                await api('/api/posts/' + post.id, { method: 'DELETE', auth: true });
+                toast('Post deleted');
+                go('#/');
+            } catch (err) { toast(err.message, true); }
+        };
+
+        const cf = document.getElementById('comment-form');
+        if (cf) cf.onsubmit = async e => {
+            e.preventDefault();
+            const btn = cf.querySelector('button');
+            const content = cf.elements.content.value.trim();
+            if (!content) return;
+            btn.disabled = true;
+            try {
+                await api('/api/posts/' + post.id + '/comments', { method: 'POST', auth: true, body: { content } });
+                toast('Comment posted');
+                await viewPost(id);
+            } catch (err) { toast(err.message, true); btn.disabled = false; }
+        };
+
+        document.querySelectorAll('[data-del]').forEach(b => {
+            b.onclick = async () => {
+                if (!confirm('Delete this comment?')) return;
+                try {
+                    await api('/api/comments/' + b.dataset.del, { method: 'DELETE', auth: true });
+                    toast('Comment deleted');
+                    await viewPost(id);
+                } catch (err) { toast(err.message, true); }
+            };
+        });
+    }
+
+    async function viewForm(id) {
+        if (!store.user) { toast('Log in to write a post', true); return go('#/login'); }
+        const post = id ? await api('/api/posts/' + id) : { title: '', content: '' };
+        app.innerHTML = `
+    <a class="back" href="#/${id ? 'post/' + id : ''}">Cancel</a>
+    <h1>${id ? 'Edit post' : 'Write a post'}</h1>
+    <form id="post-form" class="form wide">
+      <label>Title<input name="title" maxlength="200" required value="${esc(post.title)}"></label>
+      <label>Content<textarea name="content" rows="14" required>${esc(post.content)}</textarea></label>
+      <div class="actions" style="margin-top:0">
+        <button class="btn" value="PUBLISHED">Publish</button>
+        <button class="btn ghost" value="DRAFT">Save as draft</button>
+      </div>
+    </form>`;
+
+        const form = document.getElementById('post-form');
+        form.onsubmit = async e => {
+            e.preventDefault();
+            const status = e.submitter && e.submitter.value ? e.submitter.value : 'PUBLISHED';
+            const body = {
+                title: form.elements.title.value.trim(),
+                content: form.elements.content.value.trim(),
+                status
+            };
+            const buttons = form.querySelectorAll('button');
+            buttons.forEach(b => b.disabled = true);
+            try {
+                const saved = await api(id ? '/api/posts/' + id : '/api/posts', { method: id ? 'PUT' : 'POST', auth: true, body });
+                toast(status === 'PUBLISHED' ? 'Published' : 'Draft saved');
+                go('#/post/' + saved.id);
+            } catch (err) {
+                toast(err.message, true);
+                buttons.forEach(b => b.disabled = false);
+            }
+        };
+    }
+
+    function viewAuth(mode) {
+        const reg = mode === 'register';
+        app.innerHTML = `
+    <div class="auth">
+      <h1>${reg ? 'Create account' : 'Log in'}</h1>
+      <form id="auth-form" class="form">
+        <label>Username<input name="username" autocomplete="username" required minlength="${reg ? 3 : 1}" maxlength="50"></label>
+        ${reg ? '<label>Email<input name="email" type="email" autocomplete="email" required></label>' : ''}
+        <label>Password<input name="password" type="password" autocomplete="${reg ? 'new-password' : 'current-password'}" required minlength="${reg ? 6 : 1}"></label>
+        <div><button class="btn">${reg ? 'Create account' : 'Log in'}</button></div>
+      </form>
+      <p class="muted" style="margin-top:20px">${reg
+            ? 'Already have an account? <a href="#/login">Log in</a>'
+            : 'New here? <a href="#/register">Create an account</a>'}</p>
+    </div>`;
+
+        const form = document.getElementById('auth-form');
+        form.onsubmit = async e => {
+            e.preventDefault();
+            const f = form.elements;
+            const body = reg
+                ? { username: f.username.value.trim(), email: f.email.value.trim(), password: f.password.value }
+                : { username: f.username.value.trim(), password: f.password.value };
+            const btn = form.querySelector('button');
+            btn.disabled = true;
+            try {
+                const res = await api(reg ? '/api/auth/register' : '/api/auth/login', { method: 'POST', body });
+                store.user = { token: res.token, username: res.username, role: res.role };
+                toast(reg ? 'Account created' : 'Welcome back, ' + res.username);
+                go('#/');
+            } catch (err) {
+                toast(err.message, true);
+                btn.disabled = false;
+            }
+        };
+    }
+
+    /* ---------- router ---------- */
+    async function render() {
+        renderNav();
+        const h = location.hash.slice(1) || '/';
+        const parts = h.split('/');          // '/post/3' -> ['', 'post', '3']
+        const a = parts[1], b = parts[2];
+        try {
+            if (h === '/') await viewHome();
+            else if (a === 'post' && b) await viewPost(b);
+            else if (a === 'new') await viewForm();
+            else if (a === 'edit' && b) await viewForm(b);
+            else if (a === 'login') viewAuth('login');
+            else if (a === 'register') viewAuth('register');
+            else app.innerHTML = empty('Page not found. <a href="#/">Go to the home page.</a>');
+        } catch (err) {
+            app.innerHTML = `<div class="notice error">${esc(err.message)}</div>`;
+        }
+        window.scrollTo(0, 0);
+    }
+
+    window.addEventListener('hashchange', render);
+    render();
+</script>
+</body>
+</html>
